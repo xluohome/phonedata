@@ -49,6 +49,8 @@ func main() {
 ````
 
 ### 性能测试
+Thinkpad s3 (Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz)
+
 ```
 go test -v --bench="."
 
@@ -62,7 +64,7 @@ BenchmarkFindPhone-4      200000              7320 ns/op
 
 python: https://github.com/lovedboy/phone
  
-php : https://github.com/iwantofun/php_phone
+php :  https://github.com/shitoudev/phone-location , https://github.com/iwantofun/php_phone
 
 java: https://github.com/fengjiajie/phone-number-geo
 
