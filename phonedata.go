@@ -6,18 +6,21 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 	"runtime"
 	"strconv"
 )
 
+type ISP uint8
+
 const (
-	CMCC               byte = iota + 0x01 //中国移动
-	CUCC                                  //中国联通
-	CTCC                                  //中国电信
-	CTCC_v                                //电信虚拟运营商
-	CUCC_v                                //联通虚拟运营商
-	CMCC_v                                //移动虚拟运营商
+	CMCC               ISP = iota + 0x01 //中国移动
+	CUCC                                 //中国联通
+	CTCC                                 //中国电信
+	CTCC_v                               //电信虚拟运营商
+	CUCC_v                               //联通虚拟运营商
+	CMCC_v                               //移动虚拟运营商
 	INT_LEN            = 4
 	CHAR_LEN           = 1
 	HEAD_LENGTH        = 8
@@ -25,31 +28,51 @@ const (
 	PHONE_DAT          = "phone.dat"
 )
 
+// fmt.Stringer
+func (this ISP) String() string {
+	switch this {
+	case CMCC:
+		return "移动"
+	case CUCC:
+		return "联通"
+	case CTCC:
+		return "电信"
+	case CTCC_v:
+		return "电信虚拟运营商"
+	case CUCC_v:
+		return "联通虚拟运营商"
+	case CMCC_v:
+		return "移动虚拟运营商"
+	default:
+		return "未知运营商"
+	}
+}
+
+func (this ISP) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + this.String() + "\""), nil
+}
+
 type PhoneRecord struct {
-	PhoneNum []byte
-	Province []byte
-	City     []byte
-	ZipCode  []byte
-	AreaZone []byte
-	CardType string
+	PhoneNum string `json:"phone"`
+	Province string `json:"province"`
+	City     string `json:"city"`
+	ZipCode  string `json:"postcode"`
+	AreaCode string `json:"areacode"`
+	CardType ISP    `json:"cardtype"`
 }
 
 var (
-	content     []byte
-	CardTypemap = map[byte]string{
-		CMCC:   "中国移动",
-		CUCC:   "中国联通",
-		CTCC:   "中国电信",
-		CTCC_v: "中国电信虚拟运营商",
-		CUCC_v: "中国联通虚拟运营商",
-		CMCC_v: "中国移动虚拟运营商",
-	}
+	content []byte
 )
 
 func init() {
-	_, fulleFilename, _, _ := runtime.Caller(0)
+	dir := os.Getenv("PHONE_DATA_DIR")
+	if dir == "" {
+		_, fulleFilename, _, _ := runtime.Caller(0)
+		dir = path.Dir(fulleFilename)
+	}
 	var err error
-	content, err = ioutil.ReadFile(path.Join(path.Dir(fulleFilename), PHONE_DAT))
+	content, err = ioutil.ReadFile(path.Join(dir, PHONE_DAT))
 	if err != nil {
 		panic(err)
 	}
@@ -62,7 +85,7 @@ func Debug() {
 }
 
 func (pr PhoneRecord) String() string {
-	return fmt.Sprintf("PhoneNum: %s\nAreaZone: %s\nCardType: %s\nCity: %s\nZipCode: %s\nProvince: %s\n", pr.PhoneNum, pr.AreaZone, pr.CardType, pr.City, pr.ZipCode, pr.Province)
+	return fmt.Sprintf("PhoneNum: %s\nAreaZone: %s\nCardType: %s\nCity: %s\nZipCode: %s\nProvince: %s\n", pr.PhoneNum, pr.AreaCode, pr.CardType, pr.City, pr.ZipCode, pr.Province)
 }
 
 func version() string {
@@ -124,17 +147,13 @@ func Find(phone_num string) (pr *PhoneRecord, err error) {
 			cbyte := content[record_offset:]
 			end_offset := int32(bytes.Index(cbyte, []byte("\000")))
 			data := bytes.Split(cbyte[:end_offset], []byte("|"))
-			card_str, ok := CardTypemap[card_type]
-			if !ok {
-				card_str = "未知电信运营商"
-			}
 			pr = &PhoneRecord{
-				PhoneNum: []byte(phone_num),
-				Province: data[0],
-				City:     data[1],
-				ZipCode:  data[2],
-				AreaZone: data[3],
-				CardType: card_str,
+				PhoneNum: phone_num,
+				Province: string(data[0]),
+				City:     string(data[1]),
+				ZipCode:  string(data[2]),
+				AreaCode: string(data[3]),
+				CardType: ISP(card_type),
 			}
 			return
 		}
