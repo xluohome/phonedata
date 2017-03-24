@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 	"runtime"
 	"strconv"
@@ -26,11 +27,11 @@ const (
 )
 
 type PhoneRecord struct {
-	PhoneNum []byte
-	Province []byte
-	City     []byte
-	ZipCode  []byte
-	AreaZone []byte
+	PhoneNum string
+	Province string
+	City     string
+	ZipCode  string
+	AreaZone string
 	CardType string
 }
 
@@ -47,9 +48,13 @@ var (
 )
 
 func init() {
-	_, fulleFilename, _, _ := runtime.Caller(0)
+	dir := os.Getenv("PHONE_DATA_DIR")
+	if dir == "" {
+		_, fulleFilename, _, _ := runtime.Caller(0)
+		dir = path.Dir(fulleFilename)
+	}
 	var err error
-	content, err = ioutil.ReadFile(path.Join(path.Dir(fulleFilename), PHONE_DAT))
+	content, err = ioutil.ReadFile(path.Join(dir, PHONE_DAT))
 	if err != nil {
 		panic(err)
 	}
@@ -129,11 +134,11 @@ func Find(phone_num string) (pr *PhoneRecord, err error) {
 				card_str = "未知电信运营商"
 			}
 			pr = &PhoneRecord{
-				PhoneNum: []byte(phone_num),
-				Province: data[0],
-				City:     data[1],
-				ZipCode:  data[2],
-				AreaZone: data[3],
+				PhoneNum: phone_num,
+				Province: string(data[0]),
+				City:     string(data[1]),
+				ZipCode:  string(data[2]),
+				AreaZone: string(data[3]),
 				CardType: card_str,
 			}
 			return

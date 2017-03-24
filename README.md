@@ -6,7 +6,7 @@
 
  - 归属地信息库文件大小：3,203,029 字节
  - 归属地信息库最后更新：2017年1月
- - 手机号记录条数：354522
+ - 手机号段记录条数：354522
 
 ### phone.dat文件格式
  
@@ -54,7 +54,7 @@ Thinkpad s3 (Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz)
 ```
 go test -v --bench="."
 
-BenchmarkFindPhone-4      200000              7320 ns/op
+BenchmarkFindPhone-4      200000              6909 ns/op
 
 ```
 
@@ -65,6 +65,8 @@ BenchmarkFindPhone-4      200000              7320 ns/op
 python: https://github.com/lovedboy/phone
  
 php :  https://github.com/shitoudev/phone-location , https://github.com/iwantofun/php_phone
+
+php ext: https://github.com/jonnywang/phone
 
 java: https://github.com/fengjiajie/phone-number-geo
 
