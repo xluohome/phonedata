@@ -56,6 +56,20 @@ ZipCode: 312000
 Province: 浙江
 ```
 
+### 快速使用
+
+cmd 目录下phonedata是一个命令行查询手机号归属地信息的终端程序。
+```
+#./phonedata  18957509123
+ 
+PhoneNum: 18957509123
+AreaZone: 0575
+CardType: 中国电信
+City: 绍兴
+ZipCode: 312000
+Province: 浙江
+```
+
 ### 性能测试
 Thinkpad s3 (Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz)
 
