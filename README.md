@@ -25,7 +25,7 @@
 
 ### 安装使用
 
- 
+ vi test.go
 
 ```
 package main
@@ -44,9 +44,17 @@ func main() {
 	fmt.Print(pr)
 }
 
-
-
 ````
+go run test.go
+
+```
+PhoneNum: 18957509123
+AreaZone: 0575
+CardType: 中国电信
+City: 绍兴
+ZipCode: 312000
+Province: 浙江
+```
 
 ### 性能测试
 Thinkpad s3 (Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz)
@@ -54,7 +62,7 @@ Thinkpad s3 (Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz)
 ```
 go test -v --bench="."
 
-BenchmarkFindPhone-4      200000              6909 ns/op
+BenchmarkFindPhone-4      2000000              710 ns/op
 
 ```
 
