@@ -22,7 +22,7 @@ func BenchmarkFindPhone(b *testing.B) {
 		var i = 0
 		for p.Next() {
 			i++
-			_, err := Find(fmt.Sprintf("%s%d%s", "1897", i, "45"))
+			_, err := Find(fmt.Sprintf("%s%d%s", "1897", i&10000, "45"))
 			if err != nil {
 				b.Fatal(err)
 			}

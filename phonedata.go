@@ -2,14 +2,12 @@ package phonedata
 
 import (
 	"bytes"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 	"runtime"
-	"strconv"
 )
 
 const (
@@ -45,6 +43,7 @@ var (
 		CUCC_v: "中国联通虚拟运营商",
 		CMCC_v: "中国移动虚拟运营商",
 	}
+	total_len, firstoffset int32
 )
 
 func init() {
@@ -58,6 +57,8 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	total_len = int32(len(content))
+	firstoffset = get4(content[INT_LEN : INT_LEN*2])
 }
 
 func Debug() {
@@ -70,6 +71,54 @@ func (pr PhoneRecord) String() string {
 	return fmt.Sprintf("PhoneNum: %s\nAreaZone: %s\nCardType: %s\nCity: %s\nZipCode: %s\nProvince: %s\n", pr.PhoneNum, pr.AreaZone, pr.CardType, pr.City, pr.ZipCode, pr.Province)
 }
 
+func get4(b []byte) int32 {
+	if len(b) < 4 {
+		return 0
+	}
+	return int32(b[0]) | int32(b[1])<<8 | int32(b[2])<<16 | int32(b[3])<<24
+}
+
+func getN(s string) (uint32, error) {
+	var n, cutoff, maxVal uint32
+	i := 0
+	base := 10
+	cutoff = (1<<32-1)/10 + 1
+	maxVal = 1<<uint(32) - 1
+	for ; i < len(s); i++ {
+		var v byte
+		d := s[i]
+		switch {
+		case '0' <= d && d <= '9':
+			v = d - '0'
+		case 'a' <= d && d <= 'z':
+			v = d - 'a' + 10
+		case 'A' <= d && d <= 'Z':
+			v = d - 'A' + 10
+		default:
+			return 0, errors.New("invalid syntax")
+		}
+		if v >= byte(base) {
+			return 0, errors.New("invalid syntax")
+		}
+
+		if n >= cutoff {
+			// n*base overflows
+			n = (1<<32 - 1)
+			return n, errors.New("value out of range")
+		}
+		n *= uint32(base)
+
+		n1 := n + uint32(v)
+		if n1 < n || n1 > maxVal {
+			// n+v overflows
+			n = (1<<32 - 1)
+			return n, errors.New("value out of range")
+		}
+		n = n1
+	}
+	return n, nil
+}
+
 func version() string {
 	return string(content[0:INT_LEN])
 }
@@ -79,20 +128,7 @@ func totalRecord() int32 {
 }
 
 func firstRecordOffset() int32 {
-	var offset int32
-	buffer := bytes.NewBuffer(content[INT_LEN : INT_LEN*2])
-	binary.Read(buffer, binary.LittleEndian, &offset)
-	return offset
-}
-
-func indexRecord(offset int32) (phone_prefix int32, record_offset int32, card_type byte) {
-	buffer := bytes.NewBuffer(content[offset : offset+INT_LEN])
-	binary.Read(buffer, binary.LittleEndian, &phone_prefix)
-	buffer = bytes.NewBuffer(content[offset+INT_LEN : offset+INT_LEN*2])
-	binary.Read(buffer, binary.LittleEndian, &record_offset)
-	buffer = bytes.NewBuffer(content[offset+INT_LEN*2 : offset+INT_LEN*2+CHAR_LEN])
-	binary.Read(buffer, binary.LittleEndian, &card_type)
-	return
+	return get4(content[INT_LEN : INT_LEN*2])
 }
 
 // 二分法查询phone数据
@@ -102,24 +138,24 @@ func Find(phone_num string) (pr *PhoneRecord, err error) {
 	}
 
 	var left int32
-	phone_seven_int, err := strconv.ParseInt(phone_num[0:7], 10, 32)
+	phone_seven_int, err := getN(phone_num[0:7])
 	if err != nil {
 		return nil, errors.New("illegal phone number")
 	}
 	phone_seven_int32 := int32(phone_seven_int)
-	total_len := int32(len(content))
-	right := totalRecord()
-	firstoffset := firstRecordOffset()
+	right := (total_len - firstoffset) / PHONE_INDEX_LENGTH
 	for {
 		if left > right {
 			break
 		}
 		mid := (left + right) / 2
-		current_offset := firstoffset + mid*PHONE_INDEX_LENGTH
-		if current_offset >= total_len {
+		offset := firstoffset + mid*PHONE_INDEX_LENGTH
+		if offset >= total_len {
 			break
 		}
-		cur_phone, record_offset, card_type := indexRecord(current_offset)
+		cur_phone := get4(content[offset : offset+INT_LEN])
+		record_offset := get4(content[offset+INT_LEN : offset+INT_LEN*2])
+		card_type := content[offset+INT_LEN*2 : offset+INT_LEN*2+CHAR_LEN][0]
 		switch {
 		case cur_phone > phone_seven_int32:
 			right = mid - 1
