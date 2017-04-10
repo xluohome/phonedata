@@ -80,6 +80,10 @@ BenchmarkFindPhone-4      2000000              710 ns/op
 
 ```
 
+### 我仅想要phone.dat的csv文本文件?
+
+好。下载地址
+https://git.oschina.net/oss/phonedata/attach_files
 
 
 ### 其他语言实现
@@ -92,8 +96,13 @@ php ext: https://github.com/jonnywang/phone
 
 java: https://github.com/fengjiajie/phone-number-geo
 
+### 安全保证
+
+手机号归属地信息是通过网上公开数据进行收集整理。
+
+对手机号归属地信息数据的绝对正确，我不做任何保证。因此在生产环境使用前请您自行校对测试。
+
 ### 感谢
 @lovedboy https://github.com/lovedboy
 
 @zhengji  https://github.com/zheng-ji/gophone
-
