@@ -60,8 +60,16 @@ Province: 浙江
 
 cmd 目录下phonedata是一个命令行查询手机号归属地信息的终端程序。
 ```
-#./phonedata  18957509123
- 
+
+Linux:
+#PHONE_DATA_DIR=../ ./phonedata  18957509123
+
+Windows:
+>set PHONE_DATA_DIR=../
+>phonedata.exe  18957509123
+```
+stdout:
+```
 PhoneNum: 18957509123
 AreaZone: 0575
 CardType: 中国电信
