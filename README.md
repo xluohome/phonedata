@@ -104,6 +104,10 @@ php ext: https://github.com/jonnywang/phone
 
 java: https://github.com/fengjiajie/phone-number-geo
 
+Node: https://github.com/conzi/phone
+
+C++: https://github.com/yanxijian/phonedata
+
 ### 安全保证
 
 手机号归属地信息是通过网上公开数据进行收集整理。
