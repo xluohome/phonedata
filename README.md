@@ -9,7 +9,7 @@
  - 手机号段记录条数：380735
 
 ### phone.dat文件格式
- 
+
         | 4 bytes |                     <- phone.dat 版本号（如：1701即17年1月份）
         ------------
         | 4 bytes |                     <-  第一个索引的偏移
@@ -19,9 +19,9 @@
         |  index                 |      <-  索引区
         -----------------------
 
-1. 头部为8个字节，版本号为4个字节，第一个索引的偏移为4个字节 ；
+1. 头部为8个字节，版本号为4个字节，第一个索引的偏移为4个字节；
 2. 记录区 中每条记录的格式为"<省份>|<城市>|<邮编>|<长途区号>\0"。 每条记录以'\0'结束；
-3. 索引区 中每条记录的格式为"<手机号前七位><记录区的偏移><卡类型>"，每个索引的长度为9个字节； 
+3. 索引区 中每条记录的格式为"<手机号前七位><记录区的偏移><卡类型>"，每个索引的长度为9个字节；
 
 ### 安装使用
 
@@ -97,7 +97,7 @@ https://git.oschina.net/oss/phonedata/attach_files
 ### 其他语言实现
 
 python: https://github.com/lovedboy/phone
- 
+
 php :  https://github.com/shitoudev/phone-location , https://github.com/iwantofun/php_phone
 
 php ext: https://github.com/jonnywang/phone
@@ -107,6 +107,8 @@ java: https://github.com/fengjiajie/phone-number-geo
 Node: https://github.com/conzi/phone
 
 C++: https://github.com/yanxijian/phonedata
+
+C##: https://github.com/sndnvaps/Phonedata
 
 ### 安全保证
 
