@@ -8,6 +8,8 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -181,4 +183,59 @@ func Find(phone_num string) (pr *PhoneRecord, err error) {
 		}
 	}
 	return nil, errors.New("phone's data not found")
+}
+
+func Dump() ([]*PhoneRecord, error) {
+	var records []*PhoneRecord
+
+	offset := firstoffset
+	for offset < total_len {
+		cur_phone := get4(content[offset : offset+INT_LEN])
+		record_offset := get4(content[offset+INT_LEN : offset+INT_LEN*2])
+		card_str, ok := CardTypemap[content[offset+INT_LEN*2 : offset+INT_LEN*2+CHAR_LEN][0]]
+		if !ok {
+			card_str = "未知电信运营商"
+		}
+
+		province, city, zipCode, areaZone := readRecord(record_offset)
+
+		records = append(records, &PhoneRecord{
+			PhoneNum: strconv.Itoa(int(cur_phone)) + "xxxx",
+			Province: province,
+			City:     city,
+			ZipCode:  zipCode,
+			AreaZone: areaZone,
+			CardType: card_str,
+		})
+
+		offset += 9
+	}
+
+	return records, nil
+}
+
+func readRecord(offset int32) (province, city, zipCode, areaZone string) {
+	var bs []byte
+
+	for {
+		c := content[offset]
+		if c == 0 {
+			// <省份>|<城市>|<邮编>|<长途区号>
+			for k, v := range strings.Split(string(bs), "|") {
+				switch k {
+				case 0:
+					province = v
+				case 1:
+					city = v
+				case 2:
+					zipCode = v
+				case 3:
+					areaZone = v
+				}
+			}
+			return
+		}
+		bs = append(bs, c)
+		offset++
+	}
 }
