@@ -122,4 +122,5 @@ C##: https://github.com/sndnvaps/Phonedata
 @zhengji  https://github.com/zheng-ji/gophone
 
 ### 联系作者
-欢迎来信交流 phposs@qq.com ， QQ群 309020981
+
+![加作者微信](https://github.com/xluohome/phonedata/blob/master/wx.jpg)
