@@ -81,10 +81,12 @@ Province: 浙江
 ### 性能测试
 Thinkpad s3 (Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz)
 
+go version go1.13.4 windows/amd64
+
 ```
 go test -v --bench="."
 
-BenchmarkFindPhone-4      2000000              710 ns/op
+BenchmarkFindPhone-4     1964847               607 ns/op
 
 ```
 

@@ -59,7 +59,7 @@ func TestFindPhone3(t *testing.T) {
 
 func TestFindPhone4(t *testing.T) {
 
-	_, err := Find("19174872323")
+	_, err := Find("10074872323")
 	if err == nil {
 		t.Fatal("错误的结果")
 	}
