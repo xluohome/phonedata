@@ -100,11 +100,11 @@ https://git.oschina.net/oss/phonedata/attach_files
 
 python: https://github.com/lovedboy/phone
 
-php :  https://github.com/shitoudev/phone-location , https://github.com/iwantofun/php_phone
+php:  https://github.com/shitoudev/phone-location , https://github.com/iwantofun/php_phone
 
 php ext: https://github.com/jonnywang/phone
 
-java: https://github.com/fengjiajie/phone-number-geo
+java: https://github.com/fengjiajie/phone-number-geo , https://github.com/EeeMt/phone-number-geo
 
 Node: https://github.com/conzi/phone
 
