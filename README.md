@@ -4,9 +4,9 @@
 ### 这可能是github上能找到的最新最全的中国境内手机号归属地信息库
 基于GO语言实现，使用二分查找法。
 
- - 归属地信息库文件大小：3,944,134 字节
- - 归属地信息库最后更新：2019年11月
- - 手机号段记录条数：437142
+ - 归属地信息库文件大小：4,040,893 字节
+ - 归属地信息库最后更新：2020年04月
+ - 手机号段记录条数：447893
 
 ### phone.dat文件格式
 
@@ -110,13 +110,22 @@ Node: https://github.com/conzi/phone
 
 C++: https://github.com/yanxijian/phonedata
 
-C##: https://github.com/sndnvaps/Phonedata
+C#: https://github.com/sndnvaps/Phonedata
+
+Rust: https://github.com/vincascm/phonedata
 
 ### 安全保证
 
 手机号归属地信息是通过网上公开数据进行收集整理。
 
 对手机号归属地信息数据的绝对正确，我不做任何保证。因此在生产环境使用前请您自行校对测试。
+
+
+### 客户案例
+
+- [360](https://www.360.cn/)
+- [MAGAPP](http://www.magapp.cc/)
+- ...
 
 ### 感谢
 @lovedboy https://github.com/lovedboy
