@@ -135,4 +135,5 @@ Rust: https://github.com/vincascm/phonedata
 ### 联系作者
 
 加作者微信
-![加作者微信](https://github.com/xluohome/phonedata/blob/master/wx.jpg)
+
+![wx.jpg](https://ucc.alicdn.com/pic/developer-ecology/f41fd688affb41fc8853c4f99abd3d45.jpg)
