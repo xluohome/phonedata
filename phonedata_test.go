@@ -74,3 +74,33 @@ func TestFindPhone5(t *testing.T) {
 	}
 	t.Log(err)
 }
+
+func TestFindPhone1952947(t *testing.T) {
+
+	//1952947,广西,玉林,移动
+	info, err := Find("1952947")
+	if err != nil {
+		t.Fatal("错误的结果")
+	}
+	t.Log(info)
+	str := fmt.Sprintf("%s,%s,%s,%s", info.PhoneNum, info.Province, info.City, info.CardType)
+	if str != "1952947,广西,玉林,中国移动" {
+		t.Fatal("验证失败")
+	}
+
+}
+
+func TestFindPhone1669981(t *testing.T) {
+
+	//1669981,新疆,乌鲁木齐,联通
+	info, err := Find("1669981")
+	if err != nil {
+		t.Fatal("错误的结果")
+	}
+	t.Log(info)
+	str := fmt.Sprintf("%s,%s,%s,%s", info.PhoneNum, info.Province, info.City, info.CardType)
+	if str != "1669981,新疆,乌鲁木齐,中国联通" {
+		t.Fatal("验证失败")
+	}
+
+}
