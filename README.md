@@ -114,6 +114,8 @@ C#: https://github.com/sndnvaps/Phonedata
 
 Rust: https://github.com/vincascm/phonedata
 
+Kotlin: https://github.com/bytebeats/phone-geo
+
 ### 安全保证
 
 手机号归属地信息是通过网上公开数据进行收集整理。
