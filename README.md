@@ -79,14 +79,17 @@ Province: 浙江
 ```
 
 ### 性能测试
-Thinkpad s3 (Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz)
 
-go version go1.13.4 windows/amd64
+go version go1.17.6 windows/amd64
 
 ```
-go test -v --bench="."
+> go test --bench="."
 
-BenchmarkFindPhone-4     1964847               607 ns/op
+goos: windows
+goarch: amd64
+pkg: github.com/xluohome/phonedata
+cpu: AMD Ryzen 5 PRO 4650U with Radeon Graphics
+BenchmarkFindPhone-12            8454013               152.5 ns/op
 
 ```
 
