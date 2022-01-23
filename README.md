@@ -98,7 +98,7 @@ https://git.oschina.net/oss/phonedata/attach_files
 
 ### 其他语言实现
 
-python: https://github.com/lovedboy/phone
+python: https://github.com/ls0f/phone
 
 php:  https://github.com/shitoudev/phone-location , https://github.com/iwantofun/php_phone
 
@@ -130,7 +130,7 @@ Kotlin: https://github.com/bytebeats/phone-geo
 - ...
 
 ### 感谢
-@lovedboy https://github.com/lovedboy
+@ls0f https://github.com/ls0f
 
 @zhengji  https://github.com/zheng-ji/gophone
 
