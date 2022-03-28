@@ -182,3 +182,44 @@ func Find(phone_num string) (pr *PhoneRecord, err error) {
 	}
 	return nil, errors.New("phone's data not found")
 }
+
+// Add(1623901, "河南|鹤壁|458000|0392", CTCC_v)
+// Add(1676020, "广东|广州|510000|020", CUCC_v)
+// Add(1953934, "广东|广州|510000|020", CMCC)
+// Save("./phonedata.dat")
+func Add(num int32, data string, c byte) {
+	dataindex := bytes.Index(content[:firstoffset], []byte(data))
+	if dataindex == -1 {
+		fmt.Println("add data not found")
+		return
+	}
+	all := (total_len - firstoffset) / PHONE_INDEX_LENGTH
+	for i := int32(0); i < all; i++ {
+		base := firstoffset + i*PHONE_INDEX_LENGTH
+		curphone := get4(content[base : base+PHONE_INDEX_LENGTH])
+		if curphone > num {
+			temp := make([]byte, PHONE_INDEX_LENGTH)
+			content = append(content, temp...)
+			copy(content[base+PHONE_INDEX_LENGTH:], content[base:])
+			copy(temp, tobyte(num))
+			copy(temp[4:8], tobyte(int32(dataindex)))
+			copy(temp[8:9], []byte{c})
+			copy(content[firstoffset+i*PHONE_INDEX_LENGTH:], temp)
+			total_len = int32(len(content))
+			break
+		}
+	}
+}
+
+func Save(name string) {
+	ioutil.WriteFile(name, content, 0666)
+}
+
+func tobyte(i int32) []byte {
+	b := make([]byte, 4)
+	b[0] = uint8(i)
+	b[1] = uint8(i >> 8)
+	b[2] = uint8(i >> 16)
+	b[3] = uint8(i >> 24)
+	return b
+}
