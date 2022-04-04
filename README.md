@@ -113,7 +113,7 @@ Node: https://github.com/conzi/phone
 
 C++: https://github.com/yanxijian/phonedata
 
-C#: https://github.com/sndnvaps/Phonedata
+C#: https://github.com/sndnvaps/Phonedata ,  https://github.com/rwecho/Phone.Dotnet.git(dotnet core)
 
 Rust: https://github.com/vincascm/phonedata
 
