@@ -4,9 +4,9 @@
 ### 这可能是github上能找到的最新最全的中国境内手机号归属地信息库
 基于GO语言实现，使用二分查找法。
 
- - 归属地信息库文件大小：4,098,913 字节
- - 归属地信息库最后更新：2021年08月
- - 手机号段记录条数：454336
+ - 归属地信息库文件大小：4,152,564 字节
+ - 归属地信息库最后更新：2023年02月
+ - 手机号段记录条数：460232
 
 ### phone.dat文件格式
 
@@ -136,6 +136,8 @@ Kotlin: https://github.com/bytebeats/phone-geo
 @ls0f https://github.com/ls0f
 
 @zhengji  https://github.com/zheng-ji/gophone
+
+@iceout https://github.com/iceout/phoneloc
 
 ### 联系作者
 
