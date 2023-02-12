@@ -17,6 +17,7 @@ const (
 	CTCC_v                                //电信虚拟运营商
 	CUCC_v                                //联通虚拟运营商
 	CMCC_v                                //移动虚拟运营商
+	CBN                                   //中国广播电视网络有限公司 ->简称 “中国广电”
 	INT_LEN            = 4
 	CHAR_LEN           = 1
 	HEAD_LENGTH        = 8
@@ -42,6 +43,7 @@ var (
 		CTCC_v: "中国电信虚拟运营商",
 		CUCC_v: "中国联通虚拟运营商",
 		CMCC_v: "中国移动虚拟运营商",
+		CBN:    "中国广电",
 	}
 	total_len, firstoffset int32
 )
