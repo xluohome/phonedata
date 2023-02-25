@@ -79,14 +79,17 @@ Province: 浙江
 ```
 
 ### 性能测试
-Thinkpad s3 (Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz)
 
-go version go1.13.4 windows/amd64
+go version go1.17.6 windows/amd64
 
 ```
-go test -v --bench="."
+> go test --bench="."
 
-BenchmarkFindPhone-4     1964847               607 ns/op
+goos: windows
+goarch: amd64
+pkg: github.com/xluohome/phonedata
+cpu: AMD Ryzen 5 PRO 4650U with Radeon Graphics
+BenchmarkFindPhone-12            8454013               152.5 ns/op
 
 ```
 
@@ -98,7 +101,7 @@ https://git.oschina.net/oss/phonedata/attach_files
 
 ### 其他语言实现
 
-python: https://github.com/lovedboy/phone
+python: https://github.com/ls0f/phone
 
 php:  https://github.com/shitoudev/phone-location , https://github.com/iwantofun/php_phone
 
@@ -110,9 +113,11 @@ Node: https://github.com/conzi/phone
 
 C++: https://github.com/yanxijian/phonedata
 
-C#: https://github.com/sndnvaps/Phonedata
+C#: https://github.com/sndnvaps/Phonedata ,  https://github.com/rwecho/Phone.Dotnet.git (dotnet core)
 
 Rust: https://github.com/vincascm/phonedata
+
+Kotlin: https://github.com/bytebeats/phone-geo
 
 ### 安全保证
 
@@ -128,7 +133,7 @@ Rust: https://github.com/vincascm/phonedata
 - ...
 
 ### 感谢
-@lovedboy https://github.com/lovedboy
+@ls0f https://github.com/ls0f
 
 @zhengji  https://github.com/zheng-ji/gophone
 
