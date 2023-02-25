@@ -104,3 +104,48 @@ func TestFindPhone1669981(t *testing.T) {
 	}
 
 }
+
+func TestFindPhone1921306(t *testing.T) {
+
+	//1921306,河北,保定,中国广电
+	info, err := Find("1921306")
+	if err != nil {
+		t.Fatal("错误的结果")
+	}
+	t.Log(info)
+	str := fmt.Sprintf("%s,%s,%s,%s", info.PhoneNum, info.Province, info.City, info.CardType)
+	if str != "1921306,河北,保定,中国广电" {
+		t.Fatal("验证失败")
+	}
+
+}
+
+func TestFindPhone1936137(t *testing.T) {
+
+	//1936137,广东,广州,中国电信
+	info, err := Find("1936137")
+	if err != nil {
+		t.Fatal("错误的结果")
+	}
+	t.Log(info)
+	str := fmt.Sprintf("%s,%s,%s,%s", info.PhoneNum, info.Province, info.City, info.CardType)
+	if str != "1936137,广东,广州,中国电信" {
+		t.Fatal("验证失败")
+	}
+
+}
+
+func TestFindPhone1903845(t *testing.T) {
+
+	//1903845,贵州,遵义,中国电信
+	info, err := Find("1903845")
+	if err != nil {
+		t.Fatal("错误的结果")
+	}
+	t.Log(info)
+	str := fmt.Sprintf("%s,%s,%s,%s", info.PhoneNum, info.Province, info.City, info.CardType)
+	if str != "1903845,贵州,遵义,中国电信" {
+		t.Fatal("验证失败")
+	}
+
+}
