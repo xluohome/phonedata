@@ -2,7 +2,9 @@ package unpack
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/xluohome/phonedata/phonedatatool"
+	"github.com/xluohome/phonedata/phonedatatool/util"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,6 +16,23 @@ type RecordItem struct {
 	ZipCode  phonedatatool.ZipCode
 	AreaCode phonedatatool.AreaCode
 }
+
+func (ri *RecordItem) Parse(reader *bytes.Reader) error {
+	if buf, err := util.ReadUntil(reader, 0); err != nil {
+		return fmt.Errorf("no term char for record item: %v", err)
+	} else {
+		words := strings.Split(string(buf), "|")
+		if len(words) != 4 {
+			return fmt.Errorf("invalid item bytes, %v", string(buf))
+		}
+		ri.Province = phonedatatool.ProvinceName(words[0])
+		ri.City = phonedatatool.CityName(words[1])
+		ri.ZipCode = phonedatatool.ZipCode(words[2])
+		ri.AreaCode = phonedatatool.AreaCode(words[3])
+		return nil
+	}
+}
+
 type RecordOffset int64
 
 func (ro RecordOffset) String() string {
@@ -44,6 +63,14 @@ type RecordPart struct {
 	id2offset   map[RecordID]RecordOffset
 }
 
+func NewRecordPart() *RecordPart {
+	return &RecordPart{
+		offset2item: make(map[RecordOffset]*RecordItem),
+		offset2id:   make(map[RecordOffset]RecordID),
+		id2offset:   make(map[RecordID]RecordOffset),
+	}
+}
+
 func (rp *RecordPart) Bytes() []byte {
 	w := bytes.NewBuffer(nil)
 	var idList RecordIDList
@@ -65,6 +92,19 @@ func (rp *RecordPart) Bytes() []byte {
 	return w.Bytes()
 }
 
-func (rp *RecordPart) Parse(reader *bytes.Reader) error {
+func (rp *RecordPart) Parse(reader *bytes.Reader, endOffset RecordOffset) error {
+	for nowID := RecordID(1); ; nowID++ {
+		startOffset := RecordOffset(reader.Size() - int64(reader.Len()))
+		if startOffset >= endOffset {
+			break
+		}
+		item := new(RecordItem)
+		if err := item.Parse(reader); err != nil {
+			return err
+		}
+		rp.offset2item[startOffset] = item
+		rp.offset2id[startOffset] = nowID
+		rp.id2offset[nowID] = startOffset
+	}
 	return nil
 }

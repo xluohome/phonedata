@@ -7,7 +7,7 @@ import (
 )
 
 type IndexPartOffsetPart struct {
-	IndexPartOffset int64
+	IndexPartOffset RecordOffset
 }
 
 func (op *IndexPartOffsetPart) Parse(reader *bytes.Reader) error {
@@ -15,6 +15,6 @@ func (op *IndexPartOffsetPart) Parse(reader *bytes.Reader) error {
 	if _, err := reader.Read(buf); err != nil {
 		return fmt.Errorf("failed to read: %v", err)
 	}
-	op.IndexPartOffset = int64(binary.LittleEndian.Uint32(buf))
+	op.IndexPartOffset = RecordOffset(binary.LittleEndian.Uint32(buf))
 	return nil
 }

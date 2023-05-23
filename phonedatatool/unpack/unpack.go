@@ -94,13 +94,16 @@ func (u *Unpacker) parse(buf []byte) (*ParseResult, error) {
 	if err := offsetPart.Parse(reader); err != nil {
 		return nil, fmt.Errorf("failed to read index-part-offset part: %v", err)
 	}
-	recordPart := new(RecordPart)
-	if err := recordPart.Parse(bytes.NewReader(buf[:offsetPart.IndexPartOffset])); err != nil {
+	recordPart := NewRecordPart()
+	if err := recordPart.Parse(reader, offsetPart.IndexPartOffset); err != nil {
 		return nil, fmt.Errorf("failed to read record part: %v", err)
 	}
-	indexPart := new(IndexPart)
-	if err := indexPart.Parse(bytes.NewReader(buf[offsetPart.IndexPartOffset:])); err != nil {
+	indexPart := NewIndexPart()
+	if err := indexPart.Parse(reader); err != nil {
 		return nil, fmt.Errorf("failed to read index part: %v", err)
+	}
+	if err := indexPart.MatchRecordOffsetToRecordID(recordPart.offset2id); err != nil {
+		return nil, fmt.Errorf("failed to match offset to record id: %v", err)
 	}
 
 	return &ParseResult{

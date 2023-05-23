@@ -1,6 +1,9 @@
 package phonedatatool
 
-import "github.com/xluohome/phonedata"
+import (
+	"github.com/xluohome/phonedata"
+	"strconv"
+)
 
 type PhoneNumber string // 手机号码
 type AreaCode string    // 区号
@@ -10,7 +13,7 @@ func (ac AreaCode) String() string {
 
 type CardTypeID byte // 卡类型 ID，单字节
 func (ctid CardTypeID) String() string {
-	return string(ctid)
+	return strconv.Itoa(int(ctid))
 }
 func (ctid CardTypeID) ToName() CardTypeName {
 	if v, ok := phonedata.CardTypemap[byte(ctid)]; ok {
