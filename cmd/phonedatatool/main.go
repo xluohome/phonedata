@@ -18,12 +18,6 @@ const (
 	Version  = "0.0.1"
 	Author   = "seedjyh@gmail.com"
 	FullName = Name + "_" + Version + "(" + Author + ")"
-	Logo     = `
-    ____  __  ______  _   ____________  ___  _________  __________  ____  __ 
-   / __ \/ / / / __ \/ | / / ____/ __ \/   |/_  __/   |/_  __/ __ \/ __ \/ / 
-  / /_/ / /_/ / / / /  |/ / __/ / / / / /| | / / / /| | / / / / / / / / / /  
- / ____/ __  / /_/ / /|  / /___/ /_/ / ___ |/ / / ___ |/ / / /_/ / /_/ / /___
-/_/   /_/ /_/\____/_/ |_/_____/_____/_/  |_/_/ /_/  |_/_/  \____/\____/_____/` + FullName
 )
 
 func main() {
@@ -41,9 +35,7 @@ func main() {
 		return
 	}
 	if *showHelpFlag {
-		fmt.Println("./phonedatatool -unpack -i phone.dat -o tmp")
-		fmt.Println("./phonedatatool -pack -i tmp -o phone.dat")
-		fmt.Println("./phonedatatool -query -i phone.dat -n 13000001234")
+		showHelp()
 		return
 	}
 	if *unpackFlag {
@@ -56,6 +48,9 @@ func main() {
 			return
 		}
 		if err := unpack.NewUnpacker().Unpack(*source, *destination); err != nil {
+			fmt.Println("ERROR! Unpack failed.", err)
+			return
+		} else {
 			fmt.Println("Unpack completed.")
 			return
 		}
@@ -70,6 +65,9 @@ func main() {
 			return
 		}
 		if err := pack.NewPacker().Pack(*source, *destination); err != nil {
+			fmt.Println("ERROR! Pack failed.", err)
+			return
+		} else {
 			fmt.Println("Pack completed.")
 			return
 		}
@@ -84,7 +82,7 @@ func main() {
 			return
 		}
 		if info, err := query.NewQuerier(*source).QueryNumber(*number); err != nil {
-			fmt.Println("ERROR! ", err)
+			fmt.Println("ERROR! Query failed.", err)
 			return
 		} else {
 			fmt.Println("PhoneNum: ", info.PhoneNumber)
@@ -93,7 +91,18 @@ func main() {
 			fmt.Println("City: ", info.CityName)
 			fmt.Println("ZipCode: ", info.ZipCode)
 			fmt.Println("Province: ", info.ProvinceName)
+			fmt.Println("Query completed.")
+			return
 		}
 	}
+	fmt.Println("Did nothing.")
+	showHelp()
 	return
+}
+
+func showHelp() {
+	fmt.Println("<< HELP >>")
+	fmt.Println("./phonedatatool -unpack -i phone.dat -o tmp")
+	fmt.Println("./phonedatatool -pack -i tmp -o phone.dat")
+	fmt.Println("./phonedatatool -query -i phone.dat -n 13000001234")
 }
