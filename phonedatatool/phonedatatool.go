@@ -1,12 +1,12 @@
 package phonedatatool
 
 type Unpacker interface {
-	// Unpack 将压缩文件 phoneDataFilePath 解包后保存到明文目录 plainDirectoryPath 里。
-	Unpack(phoneDataFilePath string, plainDirectoryPath string) error
+	// Unpack 将二进制文件的内容解包成版本文件、记录文件、索引文件的内容。
+	Unpack(phoneDataBuf []byte) (versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf []byte, err error)
 }
 
 type Packer interface {
-	// Pack 将版本文件、记录文件、索引文件的内容打包成二进制文件。
+	// Pack 将版本文件、记录文件、索引文件的内容打包成二进制文件的内容。
 	Pack(versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf []byte) ([]byte, error)
 }
 

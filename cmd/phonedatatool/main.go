@@ -51,7 +51,7 @@ func main() {
 			fmt.Println("ERROR! No destination")
 			return
 		}
-		if err := unpack.NewUnpacker().Unpack(*source, *destination); err != nil {
+		if err := Unpack(*source, *destination); err != nil {
 			fmt.Println("ERROR! Unpack failed.", err)
 			return
 		} else {
@@ -140,5 +140,41 @@ func Pack(plainDirectoryPath string, phoneDataFilePath string) error {
 		return err
 	} else {
 		return os.WriteFile(phoneDataFilePath, buf, 0)
+	}
+}
+
+func Unpack(phoneDataFilePath string, plainDirectoryPath string) error {
+	if err := os.MkdirAll(plainDirectoryPath, 0); err != nil {
+		return fmt.Errorf("target directory %v not exist and can't be created: %v", plainDirectoryPath, err)
+	}
+
+	versionFilePath := path.Join(plainDirectoryPath, phonedatatool.VersionFileName)
+	recordFilePath := path.Join(plainDirectoryPath, phonedatatool.RecordFileName)
+	indexFilePath := path.Join(plainDirectoryPath, phonedatatool.IndexFileName)
+
+	if err := util.AssureAllFileNotExist(versionFilePath, recordFilePath, indexFilePath); err != nil {
+		return err
+	}
+
+	var rawBuf []byte
+	if b, err := os.ReadFile(phoneDataFilePath); err != nil {
+		return err
+	} else {
+		rawBuf = b
+	}
+
+	if versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf, err := unpack.NewUnpacker().Unpack(rawBuf); err != nil {
+		return err
+	} else {
+		if err := os.WriteFile(versionFilePath, versionPlainTextBuf, 0); err != nil {
+			return err
+		}
+		if err := os.WriteFile(recordFilePath, recordPlainTextBuf, 0); err != nil {
+			return err
+		}
+		if err := os.WriteFile(indexFilePath, indexPlainTextBuf, 0); err != nil {
+			return err
+		}
+		return nil
 	}
 }
