@@ -77,3 +77,30 @@ func TestIndexPart_Parse(t *testing.T) {
 		},
 	}, indexPart.prefix2item)
 }
+
+func TestIndexPart_BytesPlainText(t *testing.T) {
+	plainTextBuf := []byte("1300000|251|2\n1300001|176|2\n1300002|1|2\n")
+	indexPart := &IndexPart{prefix2item: map[NumberPrefix]*IndexItem{
+		1300000: {
+			numberPrefix: 1300000,
+			recordOffset: 300,
+			cardTypeID:   2,
+		},
+		1300001: {
+			numberPrefix: 1300001,
+			recordOffset: 200,
+			cardTypeID:   2,
+		},
+		1300002: {
+			numberPrefix: 1300002,
+			recordOffset: 100,
+			cardTypeID:   2,
+		},
+	}}
+	offset2id := map[Offset]RecordID{
+		100: 1,
+		200: 176,
+		300: 251,
+	}
+	assert.Equal(t, plainTextBuf, indexPart.BytesPlainText(offset2id))
+}

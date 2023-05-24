@@ -16,6 +16,9 @@ type NumberPrefix int32
 func (p NumberPrefix) Bytes() []byte {
 	return binary.LittleEndian.AppendUint32(nil, uint32(p))
 }
+func (p NumberPrefix) String() string {
+	return strconv.Itoa(int(p))
+}
 
 type NumberPrefixList []NumberPrefix
 
@@ -131,4 +134,23 @@ func (p *IndexPart) Parse(reader *bytes.Reader) error {
 		p.prefix2item[item.numberPrefix] = item
 	}
 	return nil
+}
+
+func (p *IndexPart) BytesPlainText(offset2id map[Offset]RecordID) []byte {
+	w := bytes.NewBuffer(nil)
+	var prefixList NumberPrefixList
+	for k, _ := range p.prefix2item {
+		prefixList = append(prefixList, k)
+	}
+	sort.Sort(prefixList)
+	for _, prefix := range prefixList {
+		item := p.prefix2item[prefix]
+		w.WriteString(strings.Join([]string{
+			prefix.String(),
+			offset2id[item.recordOffset].String(),
+			item.cardTypeID.String(),
+		}, "|"))
+		w.WriteByte('\n')
+	}
+	return w.Bytes()
 }
