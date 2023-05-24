@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/xluohome/phonedata/phonedatatool/pack"
-	"github.com/xluohome/phonedata/phonedatatool/query"
 	"github.com/xluohome/phonedata/phonedatatool/util"
 	"os"
 	"path"
@@ -89,16 +88,10 @@ func main() {
 			fmt.Println("ERROR! No number to query")
 			return
 		}
-		if info, err := query.NewQuerier(*source).QueryNumber(*number); err != nil {
+		if err := QueryNumber(*source, *number); err != nil {
 			fmt.Println("ERROR! Query failed.", err)
 			return
 		} else {
-			fmt.Println("PhoneNum: ", info.PhoneNumber)
-			fmt.Println("AreaZone: ", info.AreaCode)
-			fmt.Println("CardType: ", info.CardTypeID.ToName().String())
-			fmt.Println("City: ", info.CityName)
-			fmt.Println("ZipCode: ", info.ZipCode)
-			fmt.Println("Province: ", info.ProvinceName)
 			fmt.Println("Query completed.")
 			return
 		}
@@ -179,6 +172,26 @@ func Unpack(phoneDataFilePath string, plainDirectoryPath string) error {
 		if err := os.WriteFile(indexFilePath, indexPlainTextBuf, 0); err != nil {
 			return err
 		}
+		return nil
+	}
+}
+
+func QueryNumber(phoneDataFilePath string, number string) error {
+	var rawBuf []byte
+	if b, err := os.ReadFile(phoneDataFilePath); err != nil {
+		return err
+	} else {
+		rawBuf = b
+	}
+	if info, err := pack.NewQuerier().Query(rawBuf, number); err != nil {
+		return err
+	} else {
+		fmt.Println("PhoneNum: ", info.PhoneNumber)
+		fmt.Println("AreaZone: ", info.AreaCode)
+		fmt.Println("CardType: ", info.CardTypeID.ToName().String())
+		fmt.Println("City: ", info.CityName)
+		fmt.Println("ZipCode: ", info.ZipCode)
+		fmt.Println("Province: ", info.ProvinceName)
 		return nil
 	}
 }
