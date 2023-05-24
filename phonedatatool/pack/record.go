@@ -37,6 +37,23 @@ func (ri *RecordItem) Bytes() []byte {
 	return w.Bytes()
 }
 
+// Parse 从压缩文件读取一条 RecordItem。注意 reader 必须以 '\0' 结尾。
+func (ri *RecordItem) Parse(reader *bytes.Reader) error {
+	if buf, err := util.ReadUntil(reader, 0); err != nil {
+		return fmt.Errorf("no term char for record item: %v", err)
+	} else {
+		words := strings.Split(string(buf), "|")
+		if len(words) != 4 {
+			return fmt.Errorf("invalid item bytes, %v", string(buf))
+		}
+		ri.province = words[0]
+		ri.city = words[1]
+		ri.zipCode = words[2]
+		ri.areaCode = words[3]
+		return nil
+	}
+}
+
 type RecordPart struct {
 	id2item map[RecordID]*RecordItem
 }
@@ -94,4 +111,26 @@ func (p *RecordPart) Bytes(baseOffset Offset) ([]byte, map[RecordID]Offset) {
 		w.Write(p.id2item[id].Bytes())
 	}
 	return w.Bytes(), id2offset
+}
+
+func (p *RecordPart) Parse(reader *bytes.Reader, baseOffset Offset) (map[Offset]RecordID, error) {
+	offset2id := make(map[Offset]RecordID)
+	offset := baseOffset
+	for id := RecordID(1); reader.Len() > 0; id++ {
+		var itemBuf []byte
+		if buf, err := util.ReadUntil(reader, 0); err != nil {
+			return nil, err
+		} else {
+			itemBuf = buf
+			itemBuf = append(itemBuf, 0)
+		}
+		item := new(RecordItem)
+		if err := item.Parse(bytes.NewReader(itemBuf)); err != nil {
+			return nil, err
+		}
+		offset2id[offset] = id
+		p.id2item[id] = item
+		offset += Offset(len(itemBuf))
+	}
+	return offset2id, nil
 }
