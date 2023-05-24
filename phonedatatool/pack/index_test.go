@@ -53,5 +53,27 @@ func TestIndexPart_Bytes(t *testing.T) {
 		},
 	}}
 	assert.Equal(t, []byte("\x20\xD6\x13\x00\x4E\x1A\x00\x00\x02\x21\xD6\x13\x00\x2C\x12\x00\x00\x02\x22\xD6\x13\x00\x08\x00\x00\x00\x02"), indexPart.Bytes())
+}
 
+func TestIndexPart_Parse(t *testing.T) {
+	buf := []byte("\x20\xD6\x13\x00\x4E\x1A\x00\x00\x02\x21\xD6\x13\x00\x2C\x12\x00\x00\x02\x22\xD6\x13\x00\x08\x00\x00\x00\x02")
+	indexPart := NewIndexPart()
+	assert.NoError(t, indexPart.Parse(bytes.NewReader(buf)))
+	assert.Equal(t, map[NumberPrefix]*IndexItem{
+		1300000: {
+			numberPrefix: 1300000,
+			recordOffset: 0x1A4E,
+			cardTypeID:   2,
+		},
+		1300001: {
+			numberPrefix: 1300001,
+			recordOffset: 0x122C,
+			cardTypeID:   2,
+		},
+		1300002: {
+			numberPrefix: 1300002,
+			recordOffset: 0x0008,
+			cardTypeID:   2,
+		},
+	}, indexPart.prefix2item)
 }

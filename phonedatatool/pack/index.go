@@ -42,6 +42,16 @@ func (ii IndexItem) Bytes() []byte {
 	w.Write(ii.cardTypeID.Bytes())
 	return w.Bytes()
 }
+func (ii *IndexItem) Parse(reader *bytes.Reader) error {
+	buf := make([]byte, 9)
+	if _, err := reader.Read(buf); err != nil {
+		return err
+	}
+	ii.numberPrefix = NumberPrefix(binary.LittleEndian.Uint32(buf[:4]))
+	ii.recordOffset = Offset(binary.LittleEndian.Uint32(buf[4:8]))
+	ii.cardTypeID = phonedatatool.CardTypeID(buf[8])
+	return nil
+}
 
 type IndexPart struct {
 	prefix2item map[NumberPrefix]*IndexItem
@@ -110,4 +120,15 @@ func (p *IndexPart) Bytes() []byte {
 		w.Write(p.prefix2item[prefix].Bytes())
 	}
 	return w.Bytes()
+}
+
+func (p *IndexPart) Parse(reader *bytes.Reader) error {
+	for reader.Len() > 0 {
+		item := new(IndexItem)
+		if err := item.Parse(reader); err != nil {
+			return err
+		}
+		p.prefix2item[item.numberPrefix] = item
+	}
+	return nil
 }
