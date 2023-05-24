@@ -6,8 +6,8 @@ type Unpacker interface {
 }
 
 type Packer interface {
-	// Pack 将明文目录 plainDirectoryPath 的数据打包成压缩文件 phoneDataFilePath。
-	Pack(plainDirectoryPath string, phoneDataFilePath string) error
+	// Pack 将版本文件、记录文件、索引文件的内容打包成二进制文件。
+	Pack(versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf []byte) ([]byte, error)
 }
 
 type QueryResult struct {

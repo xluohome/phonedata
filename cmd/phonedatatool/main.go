@@ -3,9 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/xluohome/phonedata/phonedatatool"
 	"github.com/xluohome/phonedata/phonedatatool/pack"
 	"github.com/xluohome/phonedata/phonedatatool/query"
 	"github.com/xluohome/phonedata/phonedatatool/unpack"
+	"github.com/xluohome/phonedata/phonedatatool/util"
+	"os"
+	"path"
 )
 
 // 这里编译出来的可执行程序具备打包、查询、解包三个功能。
@@ -64,7 +68,7 @@ func main() {
 			fmt.Println("ERROR! No destination")
 			return
 		}
-		if err := pack.NewPacker().Pack(*source, *destination); err != nil {
+		if err := Pack(*source, *destination); err != nil {
 			fmt.Println("ERROR! Pack failed.", err)
 			return
 		} else {
@@ -105,4 +109,36 @@ func showHelp() {
 	fmt.Println("./phonedatatool -unpack -i phone.dat -o tmp")
 	fmt.Println("./phonedatatool -pack -i tmp -o phone.dat")
 	fmt.Println("./phonedatatool -query -i phone.dat -n 13000001234")
+}
+
+func Pack(plainDirectoryPath string, phoneDataFilePath string) error {
+	if err := util.AssureFileNotExist(phoneDataFilePath); err != nil {
+		return err
+	}
+	var versionPlainTextBuf []byte
+	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, phonedatatool.VersionFileName)); err != nil {
+		return err
+	} else {
+		versionPlainTextBuf = buf
+	}
+
+	var recordPlainTextBuf []byte
+	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, phonedatatool.RecordFileName)); err != nil {
+		return err
+	} else {
+		recordPlainTextBuf = buf
+	}
+
+	var indexPlainTextBuf []byte
+	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, phonedatatool.IndexFileName)); err != nil {
+		return err
+	} else {
+		indexPlainTextBuf = buf
+	}
+
+	if buf, err := pack.NewPacker().Pack(versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf); err != nil {
+		return err
+	} else {
+		return os.WriteFile(phoneDataFilePath, buf, 0)
+	}
 }
