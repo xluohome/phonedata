@@ -8,12 +8,6 @@ import (
 	"path"
 )
 
-const (
-	VersionFileName = "version.txt"
-	RecordFileName  = "record.txt"
-	IndexFileName   = "index.txt"
-)
-
 type Unpacker struct {
 }
 
@@ -26,9 +20,9 @@ func (u *Unpacker) Unpack(phoneDataFilePath string, plainDirectoryPath string) e
 		return fmt.Errorf("target directory %v not exist and can't be created: %v", plainDirectoryPath, err)
 	}
 
-	versionFilePath := path.Join(plainDirectoryPath, VersionFileName)
-	recordFilePath := path.Join(plainDirectoryPath, RecordFileName)
-	indexFilePath := path.Join(plainDirectoryPath, IndexFileName)
+	versionFilePath := path.Join(plainDirectoryPath, phonedatatool.VersionFileName)
+	recordFilePath := path.Join(plainDirectoryPath, phonedatatool.RecordFileName)
+	indexFilePath := path.Join(plainDirectoryPath, phonedatatool.IndexFileName)
 
 	if err := u.assureAllFileNotExist(versionFilePath, recordFilePath, indexFilePath); err != nil {
 		return err
