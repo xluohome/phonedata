@@ -22,9 +22,3 @@ type QueryResult struct {
 type Querier interface {
 	QueryNumber(number string) (*QueryResult, error)
 }
-
-const (
-	VersionFileName = "version.txt"
-	RecordFileName  = "record.txt"
-	IndexFileName   = "index.txt"
-)

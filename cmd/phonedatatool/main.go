@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/xluohome/phonedata/phonedatatool"
 	"github.com/xluohome/phonedata/phonedatatool/pack"
 	"github.com/xluohome/phonedata/phonedatatool/query"
 	"github.com/xluohome/phonedata/phonedatatool/util"
@@ -21,6 +20,12 @@ const (
 	Version  = "0.1.0"
 	Author   = "seedjyh@gmail.com"
 	FullName = Name + "_" + Version + "(" + Author + ")"
+)
+
+const (
+	VersionFileName = "version.txt"
+	RecordFileName  = "record.txt"
+	IndexFileName   = "index.txt"
 )
 
 func main() {
@@ -115,21 +120,21 @@ func Pack(plainDirectoryPath string, phoneDataFilePath string) error {
 		return err
 	}
 	var versionPlainTextBuf []byte
-	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, phonedatatool.VersionFileName)); err != nil {
+	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, VersionFileName)); err != nil {
 		return err
 	} else {
 		versionPlainTextBuf = buf
 	}
 
 	var recordPlainTextBuf []byte
-	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, phonedatatool.RecordFileName)); err != nil {
+	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, RecordFileName)); err != nil {
 		return err
 	} else {
 		recordPlainTextBuf = buf
 	}
 
 	var indexPlainTextBuf []byte
-	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, phonedatatool.IndexFileName)); err != nil {
+	if buf, err := os.ReadFile(path.Join(plainDirectoryPath, IndexFileName)); err != nil {
 		return err
 	} else {
 		indexPlainTextBuf = buf
@@ -147,9 +152,9 @@ func Unpack(phoneDataFilePath string, plainDirectoryPath string) error {
 		return fmt.Errorf("target directory %v not exist and can't be created: %v", plainDirectoryPath, err)
 	}
 
-	versionFilePath := path.Join(plainDirectoryPath, phonedatatool.VersionFileName)
-	recordFilePath := path.Join(plainDirectoryPath, phonedatatool.RecordFileName)
-	indexFilePath := path.Join(plainDirectoryPath, phonedatatool.IndexFileName)
+	versionFilePath := path.Join(plainDirectoryPath, VersionFileName)
+	recordFilePath := path.Join(plainDirectoryPath, RecordFileName)
+	indexFilePath := path.Join(plainDirectoryPath, IndexFileName)
 
 	if err := util.AssureAllFileNotExist(versionFilePath, recordFilePath, indexFilePath); err != nil {
 		return err
