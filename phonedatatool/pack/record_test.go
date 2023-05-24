@@ -26,3 +26,26 @@ func TestRecordPart_ParsePlainText(t *testing.T) {
 	}
 	assert.Equal(t, expectedMap, recordPart.id2item)
 }
+
+func TestRecordPart_Bytes(t *testing.T) {
+	recordPart := &RecordPart{id2item: map[RecordID]*RecordItem{
+		1: {
+			province: "\xE5\xAE\x89\xE5\xBE\xBD",
+			city:     "\xE5\xB7\xA2\xE6\xB9\x96",
+			zipCode:  "238000",
+			areaCode: "0551",
+		},
+		2: {
+			province: "\xE5\xAE\x89\xE5\xBE\xBD",
+			city:     "\xE5\x90\x88\xE8\x82\xA5",
+			zipCode:  "230000",
+			areaCode: "0551",
+		},
+	}}
+	buf, id2offset := recordPart.Bytes(8)
+	assert.Equal(t, []byte("\xE5\xAE\x89\xE5\xBE\xBD\x7C\xE5\xB7\xA2\xE6\xB9\x96\x7C\x32\x33\x38\x30\x30\x30\x7C\x30\x35\x35\x31\x00\xE5\xAE\x89\xE5\xBE\xBD\x7C\xE5\x90\x88\xE8\x82\xA5\x7C\x32\x33\x30\x30\x30\x30\x7C\x30\x35\x35\x31\x00"), buf)
+	assert.Equal(t, map[RecordID]Offset{
+		1: 8,
+		2: 34,
+	}, id2offset)
+}

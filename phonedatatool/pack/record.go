@@ -4,17 +4,37 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/xluohome/phonedata/phonedatatool/util"
+	"sort"
 	"strconv"
 	"strings"
 )
 
 type RecordID int64
 
+type RecordIDList []RecordID
+
+func (idl RecordIDList) Len() int {
+	return len(idl)
+}
+func (idl RecordIDList) Less(i, j int) bool {
+	return idl[i] < idl[j]
+}
+func (idl RecordIDList) Swap(i, j int) {
+	idl[i], idl[j] = idl[j], idl[i]
+}
+
 type RecordItem struct {
 	province string
 	city     string
 	zipCode  string
 	areaCode string
+}
+
+func (ri *RecordItem) Bytes() []byte {
+	w := bytes.NewBuffer(nil)
+	w.WriteString(strings.Join([]string{ri.province, ri.city, ri.zipCode, ri.areaCode}, "|"))
+	w.WriteByte(0)
+	return w.Bytes()
 }
 
 type RecordPart struct {
@@ -57,4 +77,21 @@ func (p *RecordPart) ParsePlainText(reader *bytes.Reader) error {
 		}
 	}
 	return nil
+}
+
+func (p *RecordPart) Bytes(baseOffset Offset) ([]byte, map[RecordID]Offset) {
+	w := bytes.NewBuffer(nil)
+	id2offset := make(map[RecordID]Offset)
+
+	var idList RecordIDList
+	for k := range p.id2item {
+		idList = append(idList, k)
+	}
+	sort.Sort(idList)
+
+	for _, id := range idList {
+		id2offset[id] = baseOffset + Offset(w.Len())
+		w.Write(p.id2item[id].Bytes())
+	}
+	return w.Bytes(), id2offset
 }
