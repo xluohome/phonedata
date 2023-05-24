@@ -9,16 +9,6 @@ type VersionPart struct {
 	version string
 }
 
-// Bytes 打包成二进制文件里的样子
-func (p *VersionPart) Bytes() []byte {
-	w := bytes.NewBuffer(nil)
-	w.WriteString(p.version)
-	for w.Len() < 4 {
-		w.WriteByte(0)
-	}
-	return w.Bytes()
-}
-
 // ParsePlainText 从文本文件读取
 func (p *VersionPart) ParsePlainText(reader *bytes.Reader) error {
 	buf := make([]byte, 4)
@@ -29,4 +19,14 @@ func (p *VersionPart) ParsePlainText(reader *bytes.Reader) error {
 	}
 	p.version = string(buf)
 	return nil
+}
+
+// Bytes 打包成二进制文件里的样子
+func (p *VersionPart) Bytes() []byte {
+	w := bytes.NewBuffer(nil)
+	w.WriteString(p.version)
+	for w.Len() < 4 {
+		w.WriteByte(0)
+	}
+	return w.Bytes()
 }
