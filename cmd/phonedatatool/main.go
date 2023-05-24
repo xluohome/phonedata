@@ -6,7 +6,6 @@ import (
 	"github.com/xluohome/phonedata/phonedatatool"
 	"github.com/xluohome/phonedata/phonedatatool/pack"
 	"github.com/xluohome/phonedata/phonedatatool/query"
-	"github.com/xluohome/phonedata/phonedatatool/unpack"
 	"github.com/xluohome/phonedata/phonedatatool/util"
 	"os"
 	"path"
@@ -163,7 +162,7 @@ func Unpack(phoneDataFilePath string, plainDirectoryPath string) error {
 		rawBuf = b
 	}
 
-	if versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf, err := unpack.NewUnpacker().Unpack(rawBuf); err != nil {
+	if versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf, err := pack.NewUnpacker().Unpack(rawBuf); err != nil {
 		return err
 	} else {
 		if err := os.WriteFile(versionFilePath, versionPlainTextBuf, 0); err != nil {
