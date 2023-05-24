@@ -30,3 +30,19 @@ func (p *VersionPart) Bytes() []byte {
 	}
 	return w.Bytes()
 }
+
+func (p *VersionPart) Parse(reader *bytes.Reader) error {
+	buf := make([]byte, 4)
+	if _, err := reader.Read(buf); err != nil {
+		return err
+	}
+	p.version = string(buf)
+	return nil
+}
+
+func (p *VersionPart) BytesPlainText() []byte {
+	w := bytes.NewBuffer(nil)
+	w.Write([]byte(p.version))
+	w.WriteByte('\n')
+	return w.Bytes()
+}
