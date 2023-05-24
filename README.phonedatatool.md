@@ -7,11 +7,13 @@
 - 第一步：将原始二进制文件解包成文本。
 - 第二步：根据需要手动修改文本。
 - 第三步：将修改后的文本打包成二进制文件。
+- 第四步：用修改后的二进制文件查询号码。
 
 ## 2. 解包
 
 ```shell
-phonedatatool.exe -unpack -i phone.dat -o abc
+D:\seedjyh\phonedata>phonedatatool.exe -unpack -i phone.dat -o tmp
+Unpack completed.
 ```
 
 可以将二进制文件 phone.dat 解包到一个名为 abc 的目录。里面有三个文本文件。
@@ -19,12 +21,26 @@ phonedatatool.exe -unpack -i phone.dat -o abc
 ## 3. 打包
 
 ```shell
-phonedatatool.exe -pack -i abc -o phone.2.dat
+D:\seedjyh\phonedata>phonedatatool.exe -pack -i tmp -o phone.2.dat
+Pack completed.
 ```
 
 可以将目录 abc 里的文本文件打包成二进制文件 phone.2.dat
 
-## 4. 解包后文件说明
+## 4. 查询号码
+
+```shell
+D:\seedjyh\phonedata>phonedatatool.exe -query -i phone.2.dat -number 13336061916
+PhoneNum:  13336061916
+AreaZone:  0571
+CardType:  中国电信
+City:  杭州
+ZipCode:  310000
+Province:  浙江
+Query completed.
+```
+
+## 5. 解包后文件说明
 
 解包后的目录下会产生 3 个文本文件，功能分别是：
 
@@ -34,11 +50,11 @@ phonedatatool.exe -pack -i abc -o phone.2.dat
 | record.txt  | 记录区（省、市、邮编、区号）                  |
 | index.txt   | 索引区（号码前 7 位、记录区偏移量、号码类型） |
 
-### 4.1. version.txt
+### 5.1. version.txt
 
 里面应该是 4 个字符。比如 "2307"。
 
-### 4.2. record.txt
+### 5.2. record.txt
 
 有多行，每行包括一条记录，例如`1|安徽|巢湖|238000|0551`。
 
@@ -54,7 +70,7 @@ phonedatatool.exe -pack -i abc -o phone.2.dat
 
 其中「记录区 ID」必须是整数，不一定要连续，但每行的「记录区 ID」必须不同。
 
-### 4.3. index.txt
+### 5.3. index.txt
 
 有多行，每行包括一条索引，例如`1300000|251|2`
 
@@ -66,9 +82,31 @@ phonedatatool.exe -pack -i abc -o phone.2.dat
 | 251     | 记录区 ID（含义见 record.txt 章节） |
 | 2       | 卡片类型码                          |
 
-## 5. 备注
+### 5.4. 文本文件修改方式
 
-### 5.1. 卡片类型码
+#### 5.4.1. 新增一个号码段
+
+如果一个号码段（前七位）在索引文件 index.txt 里没有，则可以直接在 index.txt 末尾加入一条记录。
+
+如果这个号段前缀归属于 record.txt 里已有的某一地区，则「记录区 ID」直接填该地区的 ID 即可。
+
+否则，需要先在 record.txt 里添加一条记录（注意新记录的 ID 必须和已有的所有 ID 均不相同），然后再往 index.txt 里添加记录。
+
+#### 5.4.2. 修改一个号码段
+
+直接修改该号码段在 index.txt 里的信息即可。例如，将「记录区 ID」修改成另一个数。必要时也要先在 record.txt 里新增记录。
+
+#### 5.4.3. 删除一个号码段
+
+直接删除 index.txt 里的信息即可。
+
+#### 5.4.4. 备注
+
+所有文本文件都必须以换行符结尾。
+
+## 6. 备注
+
+### 6.1. 卡片类型码
 
 卡片类型码的含义由 phonedata 原项目规定。目前（2023-05-24）类型码的含义为：
 
