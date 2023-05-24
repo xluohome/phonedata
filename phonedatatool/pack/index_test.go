@@ -17,16 +17,41 @@ func TestIndexPart_ParsePlainText(t *testing.T) {
 	assert.NoError(t, indexPart.ParsePlainText(reader, id2offset))
 	assert.Equal(t, map[NumberPrefix]*IndexItem{
 		1300000: {
+			numberPrefix: 1300000,
 			recordOffset: 300,
-			cardType:     2,
+			cardTypeID:   2,
 		},
 		1300001: {
+			numberPrefix: 1300001,
 			recordOffset: 200,
-			cardType:     2,
+			cardTypeID:   2,
 		},
 		1300002: {
+			numberPrefix: 1300002,
 			recordOffset: 100,
-			cardType:     2,
+			cardTypeID:   2,
 		},
 	}, indexPart.prefix2item)
+}
+
+func TestIndexPart_Bytes(t *testing.T) {
+	var indexPart = &IndexPart{prefix2item: map[NumberPrefix]*IndexItem{
+		1300000: {
+			numberPrefix: 1300000,
+			recordOffset: 0x1A4E,
+			cardTypeID:   2,
+		},
+		1300001: {
+			numberPrefix: 1300001,
+			recordOffset: 0x122C,
+			cardTypeID:   2,
+		},
+		1300002: {
+			numberPrefix: 1300002,
+			recordOffset: 0x0008,
+			cardTypeID:   2,
+		},
+	}}
+	assert.Equal(t, []byte("\x20\xD6\x13\x00\x4E\x1A\x00\x00\x02\x21\xD6\x13\x00\x2C\x12\x00\x00\x02\x22\xD6\x13\x00\x08\x00\x00\x00\x02"), indexPart.Bytes())
+
 }

@@ -2,14 +2,21 @@ package pack
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"github.com/xluohome/phonedata/phonedatatool"
 	"github.com/xluohome/phonedata/phonedatatool/util"
+	"sort"
 	"strconv"
 	"strings"
 )
 
 type NumberPrefix int32
+
+func (p NumberPrefix) Bytes() []byte {
+	return binary.LittleEndian.AppendUint32(nil, uint32(p))
+}
+
 type NumberPrefixList []NumberPrefix
 
 func (pl NumberPrefixList) Len() int {
@@ -23,8 +30,17 @@ func (pl NumberPrefixList) Swap(i, j int) {
 }
 
 type IndexItem struct {
+	numberPrefix NumberPrefix
 	recordOffset Offset
-	cardType     phonedatatool.CardTypeID
+	cardTypeID   phonedatatool.CardTypeID
+}
+
+func (ii IndexItem) Bytes() []byte {
+	w := bytes.NewBuffer(nil)
+	w.Write(ii.numberPrefix.Bytes())
+	w.Write(ii.recordOffset.Bytes())
+	w.Write(ii.cardTypeID.Bytes())
+	return w.Bytes()
 }
 
 type IndexPart struct {
@@ -74,13 +90,24 @@ func (p *IndexPart) ParsePlainText(reader *bytes.Reader, id2offset map[RecordID]
 		}
 
 		p.prefix2item[numberPrefix] = &IndexItem{
+			numberPrefix: numberPrefix,
 			recordOffset: recordOffset,
-			cardType:     cardTypeID,
+			cardTypeID:   cardTypeID,
 		}
 	}
 	return nil
 }
 
 func (p *IndexPart) Bytes() []byte {
-	return nil
+	var prefixList NumberPrefixList
+	for k := range p.prefix2item {
+		prefixList = append(prefixList, k)
+	}
+	sort.Sort(prefixList)
+
+	w := bytes.NewBuffer(nil)
+	for _, prefix := range prefixList {
+		w.Write(p.prefix2item[prefix].Bytes())
+	}
+	return w.Bytes()
 }

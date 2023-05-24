@@ -12,6 +12,11 @@ func (ac AreaCode) String() string {
 }
 
 type CardTypeID byte // 卡类型 ID，单字节
+
+func (ctid CardTypeID) Bytes() []byte {
+	return []byte{byte(ctid)}
+}
+
 func (ctid CardTypeID) String() string {
 	return strconv.Itoa(int(ctid))
 }
