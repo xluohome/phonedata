@@ -11,6 +11,10 @@ import (
 
 type RecordID int64
 
+func (rid RecordID) String() string {
+	return strconv.FormatInt(int64(rid), 10)
+}
+
 type RecordIDList []RecordID
 
 func (idl RecordIDList) Len() int {
@@ -133,4 +137,26 @@ func (p *RecordPart) Parse(reader *bytes.Reader, baseOffset Offset) (map[Offset]
 		offset += Offset(len(itemBuf))
 	}
 	return offset2id, nil
+}
+
+func (p *RecordPart) BytesPlainText() []byte {
+	var idList RecordIDList
+	for k := range p.id2item {
+		idList = append(idList, k)
+	}
+	sort.Sort(idList)
+
+	w := bytes.NewBuffer(nil)
+	for _, id := range idList {
+		item := p.id2item[id]
+		w.WriteString(strings.Join([]string{
+			id.String(),
+			item.province,
+			item.city,
+			item.zipCode,
+			item.areaCode,
+		}, "|"))
+		w.WriteByte('\n')
+	}
+	return w.Bytes()
 }
