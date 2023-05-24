@@ -15,7 +15,7 @@ import (
 
 const (
 	Name     = "phonedatatool"
-	Version  = "0.0.1"
+	Version  = "0.1.0"
 	Author   = "seedjyh@gmail.com"
 	FullName = Name + "_" + Version + "(" + Author + ")"
 )
