@@ -12,39 +12,55 @@ func NewUnpacker() phonedatatool.Unpacker {
 	return new(Unpacker)
 }
 
+type unpackResult struct {
+	versionPart *VersionPart
+	recordPart  *RecordPart
+	offset2id   map[Offset]RecordID
+	indexPart   *IndexPart
+}
+
 func (u *Unpacker) Unpack(phoneDataBuf []byte) (versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf []byte, err error) {
-	reader := bytes.NewReader(phoneDataBuf)
+	if result, err := u.unpack(bytes.NewReader(phoneDataBuf)); err != nil {
+		return nil, nil, nil, err
+	} else {
+		return result.versionPart.BytesPlainText(), result.recordPart.BytesPlainText(), result.indexPart.BytesPlainText(result.offset2id), nil
+	}
+}
+
+func (u *Unpacker) unpack(reader *bytes.Reader) (*unpackResult, error) {
 	versionPart := new(VersionPart)
 	if err := versionPart.Parse(reader); err != nil {
-		return nil, nil, nil, err
+		return nil, err
 	}
-	versionPlainTextBuf = versionPart.BytesPlainText()
 
 	var indexPartOffset Offset
 	if err := indexPartOffset.Parse(reader); err != nil {
-		return nil, nil, nil, err
+		return nil, err
 	}
 
 	recordBuf := make([]byte, indexPartOffset-RecordPartBaseOffset)
 	if _, err := reader.Read(recordBuf); err != nil {
-		return nil, nil, nil, err
+		return nil, err
 	}
 
 	recordPart := NewRecordPart()
 	offset2id := make(map[Offset]RecordID)
 	if o2i, err := recordPart.Parse(bytes.NewReader(recordBuf), RecordPartBaseOffset); err != nil {
-		return nil, nil, nil, err
+		return nil, err
 	} else {
 		offset2id = o2i
 	}
-	recordPlainTextBuf = recordPart.BytesPlainText()
 
 	indexPart := NewIndexPart()
 	if err := indexPart.Parse(reader); err != nil {
-		return nil, nil, nil, err
+		return nil, err
 	}
 	indexPart.BytesPlainText(offset2id)
-	indexPlainTextBuf = indexPart.BytesPlainText(offset2id)
 
-	return versionPlainTextBuf, recordPlainTextBuf, indexPlainTextBuf, nil
+	return &unpackResult{
+		versionPart: versionPart,
+		recordPart:  recordPart,
+		offset2id:   offset2id,
+		indexPart:   indexPart,
+	}, nil
 }
