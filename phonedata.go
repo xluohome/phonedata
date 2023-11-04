@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path"
-	"runtime"
 )
 
 const (
@@ -53,8 +53,9 @@ var (
 func init() {
 	dir := os.Getenv("PHONE_DATA_DIR")
 	if dir == "" {
-		_, fulleFilename, _, _ := runtime.Caller(0)
-		dir = path.Dir(fulleFilename)
+		_file, _ := exec.LookPath(os.Args[0])
+		dir, _ = path.Split(_file)
+		os.Chdir(dir)
 	}
 	var err error
 	content, err = ioutil.ReadFile(path.Join(dir, PHONE_DAT))
