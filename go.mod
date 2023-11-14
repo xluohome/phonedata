@@ -1,3 +1,3 @@
-module github.com/xluohome/phonedata
+module github.com/hetao29/phonedata
 
-go 1.16
+go 1.21

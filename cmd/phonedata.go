@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/xluohome/phonedata"
+	"github.com/hetao29/phonedata"
 )
 
 func main() {
